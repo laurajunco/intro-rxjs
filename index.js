@@ -1,6 +1,5 @@
 import {  Observable } from 'rxjs';
 
-//we can have all or none of this functions
 const observer = {
     next: (value) => console.log('next', value),
     error:(err) => console.log('error', err),
@@ -8,19 +7,20 @@ const observer = {
 }
 
 const observable = new Observable(subscriber => {
-    // pushing or emitting a value
-    subscriber.next('Hello')
-    subscriber.next('World')
-    subscriber.complete()
-    subscriber.next('This wont emit')
+    let count = 0;
+    const id = setInterval(()=> {
+        subscriber.next(count++)
+        subscriber.complete()
+    }, 1000)
+   
+    //returns the cleanup function
+    //it runs after complete() is run
+    return () => { 
+        console.log("clear interval");
+        clearInterval(id)
+    }
 }) 
 
-// subscribe could be called without observer
-observable.subscribe()
-
-// we could also pass directly the observer functions in subscribe()
-observable.subscribe(
-    (value) => console.log('next', value), 
-    (err) => console.log('error', err), 
-    () => console.log('Completed!')
-)
+console.log('before');
+observable.subscribe(observer)
+console.log('after');
