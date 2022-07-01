@@ -1,36 +1,26 @@
-import {  Observable } from 'rxjs';
+// CHAPTER 2: Observable creation operators
 
-const observer = {
+import { fromEvent } from "rxjs";
+
+/** Creation operators start the observable pipeline
+ * 
+ */
+
+ const observer = {
     next: (value) => console.log('next', value),
     error:(err) => console.log('error', err),
     complete:() => console.log('Completed!')
 }
+// create data streams from DOM events
+const source$ = fromEvent(document, 'click');
 
-const observable = new Observable(subscriber => {
-    let count = 0;
-    const id = setInterval(()=> {
-        subscriber.next(count++)
-    }, 1000)
-   
-    return () => { 
-        console.log("clear interval");
-        clearInterval(id)
-    }
-}) 
+//subscribe so the observable emits data
+const sub1 = source$.subscribe(observer)
 
-//subscribe returns a subscription variable
-const subscription = observable.subscribe(observer);
+//if we subscribe twice we get double emitions
+const sub2 = source$.subscribe(observer)
 
-//we can subscribe as many times as we need to an observable
-const subscription2 = observable.subscribe(observer);
-
-//if we unsubscribe from sub1 sub2 is unsubscribed automatically too
-subscription.add(subscription2)
-
-//tells the observable to stop the work they are doing
-// cleans up all resources being used by the observable
-// the clean up method is run, the observable is not completed
 setTimeout(() => {
-    subscription.unsubscribe()
-    // subscription2.unsubscribe()
+    console.log('unsubscribe sub2')
+    sub2.unsubscribe()
 }, 5000)
