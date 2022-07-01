@@ -1,6 +1,6 @@
 // CHAPTER 2: Observable creation operators
 
-import { of, range } from "rxjs";
+import { from } from "rxjs";
 
  const observer = {
     next: (value) => console.log('next', value),
@@ -8,14 +8,18 @@ import { of, range } from "rxjs";
     complete:() => console.log('Completed!')
 }
 
-// Emits each number in sequence before completing
-//synchrounously
-// no flattening up of the values 
-const source$ = of([1], 2, 3, 4, 5);
+// Checks the argument type and emits the value in the way that makes most sense
+//any item with lenght property: will emit each individual value
+const source$ = from([1, 2, 3, 4, 5]); // array
+const source2$ = from('Laura'); //string
 
-//emits each value in the range 3 - 7
-const range$ = range(3, 5)
+//promise
+//e its the response when it completes
+const source3$ = from(fetch(
+    'https://api.github.com/users/octocat'
+)); //string
+
 
 source$.subscribe(observer)
-
-range$.subscribe(observer)
+source2$.subscribe(observer)
+source3$.subscribe(observer)
